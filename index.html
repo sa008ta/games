@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>作ったゲーム一覧</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  a { touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+  body { margin: 0; font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif; background: #f2f7ee; color: #243020; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 28px 14px 40px; }
+  h1 { font-size: 24px; text-align: center; margin: 6px 0 4px; }
+  .sub { text-align: center; font-size: 13px; color: #6a7a63; margin: 0 0 22px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { display: block; background: #fff; border-radius: 16px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 2px 8px rgba(40, 70, 30, .12); }
+  .card:active { transform: scale(.98); }
+  .card img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .card .body { padding: 10px 12px 12px; }
+  .card .name { font-size: 16px; font-weight: bold; margin: 0 0 3px; }
+  .card .desc { font-size: 12px; color: #5c6c57; margin: 0; line-height: 1.5; }
+  .card.soon { border: 2px dashed #b9cbb0; background: transparent; box-shadow: none; display: flex; align-items: center; justify-content: center; min-height: 150px; }
+  .card.soon .name { color: #93a78c; font-size: 14px; margin: 0; }
+  footer { text-align: center; font-size: 11px; color: #9db094; margin-top: 26px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎮 作ったゲーム一覧</h1>
+  <p class="sub">タップで遊べます</p>
+  <div class="grid">
+    <a class="card" href="https://sa008ta.github.io/yosuiro-gp/">
+      <img src="cover-leaf.png" alt="用水路グランプリ">
+      <div class="body">
+        <p class="name">🍃 用水路グランプリ</p>
+        <p class="desc">描いた葉っぱがそのまま舟になるレース。世界ランキングつき</p>
+      </div>
+    </a>
+    <a class="card" href="https://sa008ta.github.io/kaminoko-dori/">
+      <img src="cover-dribble.png" alt="神の子ドリブル">
+      <div class="body">
+        <p class="name">⚽ 神の子ドリブル</p>
+        <p class="desc">迫りくるファンを、抜きまくれ。世界ランキングつき</p>
+      </div>
+    </a>
+  </div>
+  <footer>utimadev</footer>
+</div>
+</body>
+</html>
