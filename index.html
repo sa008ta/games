@@ -37,43 +37,81 @@
   <h1>🎮 作ったゲーム一覧</h1>
   <p class="sub">タップで遊べます</p>
   <div class="grid">
-    <a class="card" href="https://sa008ta.github.io/yosuiro-gp/">
-      <img src="cover-leaf.png" alt="用水路グランプリ">
-      <div class="body">
-        <p class="name">🍃 用水路グランプリ</p>
-        <p class="desc">描いた葉っぱがそのまま舟になるレース。世界ランキングつき</p>
-      </div>
-    </a>
-    <a class="card" href="https://sa008ta.github.io/kaminoko-dori/">
+    <a class="card" href="https://sa008ta.github.io/kaminoko-dori/" data-sheet="1c7xVXa5N__-ufglRQGpvQ--EMQ3kR6d6MxxOl5qrlNk" data-mode="pid" data-col="3" data-exclude="chkpid9999">
       <img src="cover-dribble.png" alt="神の子ドリブル">
       <div class="body">
         <p class="name">⚽ 神の子ドリブル</p>
         <p class="desc">迫りくるファンを、抜きまくれ。世界ランキングつき</p>
       </div>
     </a>
-    <a class="card" href="https://sa008ta.github.io/ippitsu-pk/">
+    <a class="card" href="https://sa008ta.github.io/ippitsu-pk/" data-sheet="1bEgqP0exgNgyR4zJsWfGU-FzzAEeo6-rb7kNPrz7a_U" data-mode="codes">
       <img src="cover-pk.png" alt="一筆PK">
       <div class="body">
         <p class="name">🥅 一筆PK</p>
         <p class="desc">描いた線がそのままシュートになるPK。コード対戦とレートつき</p>
       </div>
     </a>
-    <a class="card" href="https://sa008ta.github.io/juwaki-dash/">
-      <img src="cover-phone.png" alt="出世街道は電話番から">
-      <div class="body">
-        <p class="name">📞 出世街道は電話番から</p>
-        <p class="desc">仕事をこなしながら、鳴った電話を誰よりも早く取る。世界ランキングつき</p>
-      </div>
-    </a>
-    <a class="card" href="https://sa008ta.github.io/gote-hissho/">
+    <a class="card" href="https://sa008ta.github.io/gote-hissho/" data-sheet="1Cf4OU6L019LFfuQoEG8fcI_l21OgqrmKLptT3JqA6ak" data-mode="pid" data-col="3" data-exclude="pchk0001">
       <img src="cover-counter.png" alt="後手必勝">
       <div class="body">
         <p class="name">⚔️ 後手必勝</p>
         <p class="desc">敵の斬撃を受け流して、カウンターで斬る一騎打ち。世界ランキングつき</p>
       </div>
     </a>
+    <a class="card" href="https://sa008ta.github.io/juwaki-dash/" data-sheet="1jS-j9LjovpVyDS14MEZ9NE6NaQD5n_M4coEYC7q15SA" data-mode="pid" data-col="3" data-exclude="chkpid0001">
+      <img src="cover-phone.png" alt="出世街道は電話番から">
+      <div class="body">
+        <p class="name">📞 出世街道は電話番から</p>
+        <p class="desc">仕事をこなしながら、鳴った電話を誰よりも早く取る。世界ランキングつき</p>
+      </div>
+    </a>
+    <a class="card" href="https://sa008ta.github.io/yosuiro-gp/" data-sheet="1CWtexSUTZ7T-zR7Ai6vNzlstHVCCRxyk6NN-OqJ4feA" data-mode="pid" data-col="6">
+      <img src="cover-leaf.png" alt="用水路グランプリ">
+      <div class="body">
+        <p class="name">🍃 用水路グランプリ</p>
+        <p class="desc">描いた葉っぱがそのまま舟になるレース。世界ランキングつき</p>
+      </div>
+    </a>
   </div>
   <footer>utimadev</footer>
 </div>
+<script>
+// 人気順ソート: 各ゲームの記録シートからプレイヤー数を数えて降順に並べ替える。
+// 新しいカードを足すときは、そのゲームのシートIDと数え方を data 属性で付ける。
+(async () => {
+  const grid = document.querySelector('.grid');
+  if (!grid) return;
+  const cards = [...grid.querySelectorAll('.card[data-sheet]')];
+  async function count(card) {
+    const res = await fetch('https://docs.google.com/spreadsheets/d/' + card.dataset.sheet + '/gviz/tq?tqx=out:json&_=' + Date.now());
+    const txt = await res.text();
+    const j = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1));
+    const rows = ((j.table || {}).rows || []).map(r => (r.c || []).map(c => (c ? c.v : null)));
+    if (card.dataset.mode === 'codes') {
+      const codes = new Set(), dead = new Set();
+      for (const row of rows) {
+        if (!row[1]) continue;
+        codes.add(row[1]);
+        if (row[2] === '__DEL__') dead.add(row[1]);
+      }
+      let n = 0;
+      for (const c of codes) if (!dead.has(c)) n++;
+      return n;
+    }
+    const col = parseInt(card.dataset.col || '3', 10);
+    const excl = new Set((card.dataset.exclude || '').split(',').filter(Boolean));
+    const s = new Set();
+    for (const row of rows) {
+      const v = row[col];
+      if (v && !excl.has(v)) s.add(v);
+    }
+    return s.size;
+  }
+  const results = await Promise.allSettled(cards.map(count));
+  const scored = cards.map((card, i) => ({ card, i, n: results[i].status === 'fulfilled' ? results[i].value : -1 }));
+  scored.sort((a, b) => (b.n - a.n) || (a.i - b.i));
+  for (const s of scored) grid.appendChild(s.card);
+})();
+</script>
 </body>
 </html>
